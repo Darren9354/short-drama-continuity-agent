@@ -38,12 +38,12 @@ codex login
 # 人工复核，追加历史而不覆盖原始模型结论
 .venv/bin/python -m continuity_agent review \
   runs/episode-v1 issue-实际ID \
-  --decision confirmed --reviewer Darren --note '已核对前后镜头，确认衣服颜色变化'
+  --decision confirmed --reviewer Reviewer --note '已核对前后镜头，确认衣服颜色变化'
 
 # 整段报告复核；零疑点时也可使用。只代表完成复核，不表示视频无错误。
 .venv/bin/python -m continuity_agent review-scope \
   runs/episode-v1 \
-  --decision needs_more_evidence --reviewer Darren --note '请补充手部交接镜头'
+  --decision needs_more_evidence --reviewer Reviewer --note '请补充手部交接镜头'
 ```
 
 默认每秒一张，使用HSV直方图差异识别疑似硬切并补取切镜前后帧；默认最多240张、24次视觉调用，每批12帧并重叠2帧。Agent将角色和道具状态、最多4张已见关键帧传到下一批，辅助跨镜头对比。可用 `--interval`、`--batch-size`、`--max-frames`、`--max-calls` 控制工作量。超过上限直接停止，不偷偷丢帧或裁短视频。最多检查10分钟范围，可用 `--start/--end` 分段。
@@ -69,3 +69,12 @@ codex login
 ```
 
 首版只接受可准确定位的恒定帧率视频，发现明显时间戳漂移即停止。动作检查针对截图中的姿态/方向/持物状态；不验证完整连续运动、口型、音频或物理仿真。遮挡、闪回、时间跳跃、光线与剪辑方式均需人工判断。短暂错误可能落在采样间隔之间。首版没有人工标注评测集，不声称检出率或商业可用准确率。
+
+
+## 隐私与数据
+
+仓库仅提供源码、空值环境变量示例和虚构测试数据。真实视频、参考图、运行报告、API密钥和本机配置应保留在本机；默认产物目录和常见凭据文件已列入 `.gitignore`。`prepare` 在本地取证，`run` / `analyze` 会把选定截图和基准发送给配置的模型后端。
+
+## 许可证
+
+本项目采用 [MIT License](LICENSE)。
